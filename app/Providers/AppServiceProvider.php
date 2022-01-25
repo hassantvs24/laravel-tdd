@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Domains\ImageManageContract;
+use App\Services\ImageServices\ImgbbImageService;
+use App\Services\ImageServices\SelfHostedImageService;
+use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +27,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // registering the contract
+        $this->app->bind(ImageManageContract::class, function ($app, $parameters) {
+            if (isset($parameters['service'])) {
+                $imageServices = new Collection([
+                    SelfHostedImageService::NAME => SelfHostedImageService::class,
+                    ImgbbImageService::NAME => ImgbbImageService::class,
+                ]);
+
+                return app($imageServices[$parameters['service']]);
+            }
+        });
     }
 }
