@@ -47,6 +47,7 @@ class AuthController extends APIController
      */
     public function logout(LogoutRequest $request): JsonResponse
     {
+        
         $request->user()->tokens()->delete();
         return $this->respondOk([]);
     }
